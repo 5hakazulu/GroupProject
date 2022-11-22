@@ -1,0 +1,18 @@
+/* {
+    border: 1px solid red;
+}*/
+body {
+    width: 100vw;
+}
+
+#recommendations {
+    width: 78%;
+}
+
+#recs-header {
+    color: #c5c3c0;
+}
+
+.screenshots {
+    width: 100px;
+}
