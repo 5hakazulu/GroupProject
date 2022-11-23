@@ -50,7 +50,7 @@ async function getGameInfo(games) {
 
     for (let k = 0; k < games.length; k++) {
         // console.log('hi');
-        await fetch(`http://store.steampowered.com/api/appdetails?key=B27BC9225D5D6ED28D03A46F6BEE4904&appids=${games[k]}`)
+        await fetch(`https://store.steampowered.com/api/appdetails?key=B27BC9225D5D6ED28D03A46F6BEE4904&appids=${games[k]}`)
             .then(res => res.json())
             .then(data => {
                 let currentId = games[k];
