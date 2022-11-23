@@ -1,7 +1,8 @@
-userID = '76561198030960486';
+
 userIDArray = ['76561198030960486', '76561198040612780', '76561198059023681']
 let allPlayerGames = [];
 let allGameData = [];
+let multiplayerGames =[];
 
 
 //with the proxy (this has a limit so i had to download an extension to run tests)
@@ -47,39 +48,71 @@ async function getAllPlayerGames() {
 
 }
 
-function getGameInfo(games) {
+async function getGameInfo(games) {
 
-    for (let k = 0; k < 2; k++) {
+    for (let k = 0; k < games.length; k++) {
         // console.log('hi');
-        fetch(`http://store.steampowered.com/api/appdetails?key=B27BC9225D5D6ED28D03A46F6BEE4904&appids=${games[k]}`)
+        await fetch(`http://store.steampowered.com/api/appdetails?key=B27BC9225D5D6ED28D03A46F6BEE4904&appids=${games[k]}`)
             .then(res => res.json())
             .then(data => {
                 let currentId = games[k];
-                console.log(currentId);
-                console.log(data);
-                allGameData.push(data);
-
-                // if (games[k].data.categories.description === 'multiplayer') {
-                //     console.log('hi');
-                // }
-                console.log(allGameData);
+                const map = new Map(Object.entries(data));
+                allGameData.push(map.get(currentId.toString()).data);
+                // console.log(allGameData[k].categories);
             })
     }
-    for (let m = 0; m < allGameData.length; m++) {
-        console.log(allGameData[m])
+
+}
+
+function populateMultiplayerGames(arrayOfMultiGames){
+    let data1 = ""
+    for(let i =0; i< arrayOfMultiGames.length; i++){
+        data1+= `
+        <div class="col-sm-3">
+            <div class="card" style="width: 18rem;">
+                <img src="${arrayOfMultiGames[i].header_image}" class="card-img-top" alt="${arrayOfMultiGames[i].name}">
+                <div class="card-body">
+                    <h5>${arrayOfMultiGames[i].name}</h5>
+                    <p>${arrayOfMultiGames[i].short_description}</p>
+                </div>
+            </div>    
+        </div>
+        
+        
+        `
+
     }
 
-
+  document.getElementById("cards").innerHTML = data1;
 }
 
 getAllPlayerGames()
     .then(() => {
-        getGameInfo(allPlayerGames)
-        console.log(allPlayerGames);
-        let arraylength = allPlayerGames.length;
-        console.log(arraylength);
+        getGameInfo(allPlayerGames.splice(0,50))
+        .then(()=>{
+            let arraylength = allPlayerGames.length;
+            // console.log(arraylength);
+            console.log(allGameData);
+            console.log(allGameData.length);
+            for (let m = 0; m < allGameData.length; m++) {
+                // console.log(allGameData[m].categories.length);
+                for(let g = 0; g< allGameData[m].categories.length; g++){
+                    // console.log(allGameData[m].categories[g].id);
+                    if (allGameData[m].categories[g].description === "Multi-player"){
+                      
+                        multiplayerGames.push(allGameData[m]);
+                    }
+                }
+            }
+            console.log(multiplayerGames)
+        })
+        .then(()=>{
+            populateMultiplayerGames(multiplayerGames);
+        })
+        // console.log(allPlayerGames);
 
     })
+
 
 
 
